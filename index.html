@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>همسفر</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Ambient Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="bg-glow glow-3"></div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">پیام سیستم</div>
+
+    <!-- Premium Top Header -->
+    <header id="user-header" class="hidden">
+        <div class="header-inner">
+            <!-- Brand -->
+            <div class="header-brand" onclick="nav('dashboard')">
+                <div class="brand-icon">
+                    <i class="fa fa-car-side"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">همسفر</span>
+                </div>
+            </div>
+
+            <!-- Center Quick Stats (Desktop) -->
+            <div class="header-center">
+                <div class="header-stat-pill">
+                    <i class="fa fa-route text-primary"></i>
+                    <span>سفرهای فعال: <b id="header-active-trips">0</b></span>
+                </div>
+                <button type="button" onclick="nav('add')" class="header-quick-btn">
+                    <i class="fa fa-plus"></i> ثبت سفر سریع
+                </button>
+            </div>
+
+            <!-- User Profile & Token Pill -->
+            <div class="header-actions">
+                <div class="token-pill" onclick="nav('wallet')" title="موجودی توکن">
+                    <div class="coin-icon"><i class="fa fa-coins"></i></div>
+                    <div class="token-meta">
+                        <span class="token-count" id="header-tokens">0</span>
+                        <span class="token-label">توکن</span>
+                    </div>
+                </div>
+
+                <div class="profile-chip">
+                    <div class="avatar-circle" id="header-avatar">ک</div>
+                    <div class="profile-details">
+                        <span class="profile-name" id="header-name">کاربر</span>
+                        <div class="profile-sub">
+                            <span class="rating-pill"><i class="fa fa-star"></i> <span id="header-rating">5.0</span></span>
+                            <span class="sid-text" id="header-sid"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock Navigation -->
+    <nav id="navbar" class="hidden" aria-label="منوی اصلی">
+        <div class="dock-wrapper">
+            <button type="button" onclick="nav('dashboard')" class="nav-btn active" data-view="dashboard">
+                <span class="nav-icon"><i class="fa fa-home"></i></span>
+                <span class="nav-label">خانه</span>
+                <span class="active-indicator"></span>
+            </button>
+            <button type="button" onclick="nav('wallet')" class="nav-btn" data-view="wallet">
+                <span class="nav-icon"><i class="fa fa-wallet"></i></span>
+                <span class="nav-label">کیف پول</span>
+                <span class="active-indicator"></span>
+            </button>
+            <button type="button" onclick="nav('add')" class="nav-btn nav-btn-cta" data-view="add">
+                <span class="nav-icon"><i class="fa fa-plus"></i></span>
+                <span class="nav-label">ثبت سفر</span>
+            </button>
+            <button type="button" onclick="nav('rating')" class="nav-btn" data-view="rating">
+                <span class="nav-icon"><i class="fa fa-star"></i></span>
+                <span class="nav-label">سوابق</span>
+                <span class="active-indicator"></span>
+            </button>
+            <button type="button" onclick="logout()" class="nav-btn nav-btn-logout">
+                <span class="nav-icon"><i class="fa fa-sign-out-alt"></i></span>
+                <span class="nav-label">خروج</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- View: Auth (Split Glassmorphism Design) -->
+    <section id="view-auth" class="view active auth-page">
+        <div class="auth-shell">
+            <!-- Visual Hero Side -->
+            <div class="auth-hero">
+                <div class="hero-badge">
+                    <span class="live-dot"></span> سامانه اشتراک‌گذاری سفر دانشجویی
+                </div>
+                <h1 class="hero-title">
+                    <span>همسفر</span>
+                </h1>
+                <p class="hero-desc">
+                    به جای پرداخت کامل کرایه اسنپ و گشتن در گروه‌های شلوغ، در چند ثانیه هم‌مسیر خودت را پیدا کن و هزینه رفت‌وآمد را تقسیم کن.
+                </p>
+
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <div class="feature-icon fi-blue"><i class="fa fa-wallet"></i></div>
+                        <div>
+                            <h4>کاهش تا ۷۵٪ هزینه</h4>
+                            <p>تقسیم کرایه اسنپ میان ۲ تا ۴ دانشجو</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon fi-green"><i class="fa fa-shield-alt"></i></div>
+                        <div>
+                            <h4>محیط امن و دانشجویی</h4>
+                            <p>نمایش اطلاعات تماس فقط به اعضای تاییدشده سفر</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon fi-amber"><i class="fa fa-bolt"></i></div>
+                        <div>
+                            <h4>هماهنگی زیر ۱ دقیقه</h4>
+                            <p>فیلتر سریع بر اساس مبدأ، مقصد، ساعت و جنسیت</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-gift-box">
+                    <div class="gift-icon"><i class="fa fa-gift"></i></div>
+                    <div>
+                        <strong>هدیه ورود</strong>
+                        <span>۱۰ توکن رایگان بلافاصله پس از ثبت‌نام اولیه</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Side -->
+            <div class="auth-form-panel">
+                <div class="auth-form-header">
+                    <h2>ورود به همسفر</h2>
+                    <p>اطلاعات دانشجویی خود را وارد کنید</p>
+                </div>
+
+                <form id="auth-form" onsubmit="handleLogin(event)" autocomplete="off">
+                    <div class="form-group">
+                        <label for="reg-name">نام و نام خانوادگی</label>
+                        <div class="input-wrapper">
+                            <i class="fa fa-user input-icon"></i>
+                            <input type="text" id="reg-name" required maxlength="60">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-sid">شماره دانشجویی</label>
+                        <div class="input-wrapper">
+                            <i class="fa fa-id-card input-icon"></i>
+                            <input type="text" id="reg-sid" inputmode="numeric" maxlength="15" required style="direction: ltr; text-align: right;" oninput="sanitizeNumericInput(this)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>جنسیت</label>
+                        <input type="hidden" id="reg-gender" value="آقا">
+                        <div class="gender-selector">
+                            <button type="button" class="gender-option active" data-value="آقا" onclick="selectGender(this)">
+                                <i class="fa fa-mars"></i> آقا
+                            </button>
+                            <button type="button" class="gender-option" data-value="خانم" onclick="selectGender(this)">
+                                <i class="fa fa-venus"></i> خانم
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-contact">شماره موبایل یا آیدی تلگرام</label>
+                        <div class="input-wrapper">
+                            <i class="fa fa-phone-alt input-icon"></i>
+                            <input type="text" id="reg-contact" required maxlength="50" style="direction: ltr; text-align: right;">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-glow btn-block mt-2">
+                        <span>ثبت‌نام و ورود به سامانه</span>
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App Container (Full Responsive Wide Layout) -->
+    <main id="app-main" class="container hidden">
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="view">
+            <div class="dashboard-layout">
+                <!-- Primary Content Area -->
+                <div class="dashboard-main">
+                    <!-- Welcome Banner -->
+                    <div class="welcome-banner">
+                        <div class="welcome-text">
+                            <h2>سلام <span id="welcome-name" class="text-gradient">کاربر</span> 👋</h2>
+                            <p>مسیر امروزت را پیدا کن یا سفر جدید ثبت کن تا هم‌سفرها به تو بپیوندند.</p>
+                        </div>
+                        <button type="button" onclick="nav('add')" class="btn btn-glow">
+                            <i class="fa fa-plus"></i> ایجاد سفر جدید
+                        </button>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="filter-box glass-card">
+                        <div class="filter-header">
+                            <span><i class="fa fa-sliders-h text-primary"></i> فیلتر سریع مسیرها</span>
+                            <button type="button" class="reset-filter-btn" onclick="resetFilters()">پاک‌کردن فیلترها</button>
+                        </div>
+                        <div class="filter-grid">
+                            <div class="select-wrap">
+                                <label for="filter-from">مبدأ</label>
+                                <select id="filter-from" onchange="renderTrips()">
+                                    <option value="">همه مبدأها</option>
+                                    <option value="دانشگاه">دانشگاه</option>
+                                    <option value="خوابگاه پسران">خوابگاه پسران</option>
+                                    <option value="خوابگاه دختران">خوابگاه دختران</option>
+                                    <option value="نوبنیاد">نوبنیاد</option>
+                                </select>
+                            </div>
+                            <div class="select-wrap">
+                                <label for="filter-to">مقصد</label>
+                                <select id="filter-to" onchange="renderTrips()">
+                                    <option value="">همه مقصدها</option>
+                                    <option value="دانشگاه">دانشگاه</option>
+                                    <option value="خوابگاه پسران">خوابگاه پسران</option>
+                                    <option value="خوابگاه دختران">خوابگاه دختران</option>
+                                    <option value="نوبنیاد">نوبنیاد</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="renderTrips()" class="btn btn-primary filter-submit-btn">
+                                <i class="fa fa-search"></i> جستجو
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Board Header & Tabs -->
+                    <div class="board-toolbar">
+                        <h3 class="board-title"><i class="fa fa-layer-group"></i> تابلوی سفرها</h3>
+                        <div class="segmented-tabs">
+                            <button type="button" class="seg-tab active" id="tab-all" onclick="setTab('all')">
+                                همه سفرها <span class="tab-count" id="count-all">0</span>
+                            </button>
+                            <button type="button" class="seg-tab" id="tab-mine" onclick="setTab('mine')">
+                                سفرهای من <span class="tab-count" id="count-mine">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Trips Grid -->
+                    <div id="trips-container"></div>
+                </div>
+
+                <!-- Sidebar Panel -->
+                <aside class="dashboard-sidebar">
+                    <!-- Quick Stats Widget -->
+                    <div class="glass-card sidebar-widget">
+                        <h4 class="widget-title"><i class="fa fa-chart-pie text-primary"></i> وضعیت لحظه‌ای</h4>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-value text-primary" id="stat-total">0</span>
+                                <span class="stat-label">سفر فعال</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-value text-success" id="stat-mine">0</span>
+                                <span class="stat-label">سفرهای من</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-value text-warning" id="stat-tokens">0</span>
+                                <span class="stat-label">توکن باقی‌مانده</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-value text-info" id="stat-joined">0</span>
+                                <span class="stat-label">هم‌سفری‌ها</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Popular Routes Quick Filter -->
+                    <div class="glass-card sidebar-widget">
+                        <h4 class="widget-title"><i class="fa fa-fire text-warning"></i> مسیرهای پرتردد</h4>
+                        <div class="quick-routes">
+                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('دانشگاه', 'خوابگاه پسران')">
+                                <span>دانشگاه <i class="fa fa-long-arrow-alt-left"></i> خوابگاه پسران</span>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('خوابگاه پسران', 'دانشگاه')">
+                                <span>خوابگاه پسران <i class="fa fa-long-arrow-alt-left"></i> دانشگاه</span>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('دانشگاه', 'خوابگاه دختران')">
+                                <span>دانشگاه <i class="fa fa-long-arrow-alt-left"></i> خوابگاه دختران</span>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('دانشگاه', 'نوبنیاد')">
+                                <span>دانشگاه <i class="fa fa-long-arrow-alt-left"></i> نوبنیاد</span>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- How It Works Guide -->
+                    <div class="glass-card sidebar-widget">
+                        <h4 class="widget-title"><i class="fa fa-info-circle text-success"></i> روند هماهنگی</h4>
+                        <ul class="steps-list">
+                            <li>
+                                <span class="step-num">۱</span>
+                                <span>سفر مورد نظر را از تابلو انتخاب کنید یا سفر جدید ثبت کنید.</span>
+                            </li>
+                            <li>
+                                <span class="step-num">۲</span>
+                                <span>با تایید هم‌سفری، ۱ توکن کسر شده و اطلاعات تماس باز می‌شود.</span>
+                            </li>
+                            <li>
+                                <span class="step-num">۳</span>
+                                <span>در ساعت مقرر اسنپ مشترک بگیرید و کرایه را تقسیم کنید.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- View: Add Trip -->
+        <div id="view-add" class="view">
+            <div class="narrow-center">
+                <div class="glass-card">
+                    <div class="card-header-fancy">
+                        <div class="header-icon-box"><i class="fa fa-plus"></i></div>
+                        <div>
+                            <h3>ایجاد سفر جدید</h3>
+                            <p class="text-muted">مشخصات حرکت را وارد کنید تا در تابلوی سفرها نمایش داده شود</p>
+                        </div>
+                    </div>
+
+                    <form id="add-trip-form" onsubmit="handleAddTrip(event)" autocomplete="off">
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="trip-from">مبدأ</label>
+                                <select id="trip-from" required onchange="toggleCustomLocation('from')">
+                                    <option value="دانشگاه">دانشگاه</option>
+                                    <option value="خوابگاه پسران">خوابگاه پسران</option>
+                                    <option value="خوابگاه دختران">خوابگاه دختران</option>
+                                    <option value="نوبنیاد">نوبنیاد</option>
+                                    <option value="سایر">سایر (وارد کردن دستی)</option>
+                                </select>
+                                <input type="text" id="trip-from-custom" class="custom-loc-input hidden mt-1" maxlength="40" placeholder="نام مبدأ را بنویسید">
+                            </div>
+                            <div class="form-group">
+                                <label for="trip-to">مقصد</label>
+                                <select id="trip-to" required onchange="toggleCustomLocation('to')">
+                                    <option value="خوابگاه پسران">خوابگاه پسران</option>
+                                    <option value="خوابگاه دختران">خوابگاه دختران</option>
+                                    <option value="دانشگاه">دانشگاه</option>
+                                    <option value="نوبنیاد">نوبنیاد</option>
+                                    <option value="سایر">سایر (وارد کردن دستی)</option>
+                                </select>
+                                <input type="text" id="trip-to-custom" class="custom-loc-input hidden mt-1" maxlength="40" placeholder="نام مقصد را بنویسید">
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>ساعت حرکت (۲۴ ساعته)</label>
+                                <div class="time-24h-picker">
+                                    <div class="time-col">
+                                        <span class="time-sublabel">ساعت</span>
+                                        <select id="trip-hour" required aria-label="ساعت"></select>
+                                    </div>
+                                    <span class="time-colon">:</span>
+                                    <div class="time-col">
+                                        <span class="time-sublabel">دقیقه</span>
+                                        <select id="trip-minute" required aria-label="دقیقه"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="trip-capacity">ظرفیت هم‌سفر (نفر)</label>
+                                <select id="trip-capacity" required>
+                                    <option value="1">۱ نفر</option>
+                                    <option value="2" selected>۲ نفر</option>
+                                    <option value="3">۳ نفر</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trip-gender">محدودیت جنسیت</label>
+                            <select id="trip-gender">
+                                <option value="فرقی ندارد">فرقی ندارد</option>
+                                <option value="فقط آقایان">فقط آقایان</option>
+                                <option value="فقط خانم‌ها">فقط خانم‌ها</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trip-note">توضیحات (اختیاری)</label>
+                            <textarea id="trip-note" rows="3" maxlength="200"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-glow btn-block mt-2">
+                            <i class="fa fa-paper-plane"></i> ثبت در تابلوی سفرها
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Wallet (Empty as Requested) -->
+        <div id="view-wallet" class="view">
+            <div class="narrow-center">
+                <div class="empty-state-card">
+                    <div class="empty-icon"><i class="fa fa-wallet"></i></div>
+                    <h3>بخش کیف پول</h3>
+                    <p class="text-muted">این بخش در فاز بعدی پروژه فعال خواهد شد.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Rating / History -->
+        <div id="view-rating" class="view">
+            <div class="narrow-center">
+                <div class="alert alert-warning">
+                    <i class="fa fa-shield-alt"></i> سیستم امتیازدهی ضامن نظم سامانه است. کاربرانی که میانگین امتیازشان زیر ۲.۵ ستاره شود، امکان رزرو سفر جدید نخواهند داشت.
+                </div>
+                <div id="joined-history-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Confirm Join -->
+    <div id="join-modal" class="modal" onclick="handleBackdropClick(event, 'join-modal')">
+        <div class="modal-content">
+            <div class="modal-icon-top mi-amber"><i class="fa fa-handshake"></i></div>
+            <h3 class="text-center">تایید نهایی هم‌سفری</h3>
+            <p class="text-center text-muted mt-1">
+                با تایید این سفر، <b class="text-warning">۱ توکن</b> از کیف پول شما کسر شده و اطلاعات تماس ایجادکننده سفر برایتان نمایش داده می‌شود.
+            </p>
+            <div class="modal-actions mt-2">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('join-modal')">انصراف</button>
+                <button type="button" class="btn btn-glow" onclick="confirmJoin()">پرداخت ۱ توکن و رزرو</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirm Delete Trip -->
+    <div id="delete-modal" class="modal" onclick="handleBackdropClick(event, 'delete-modal')">
+        <div class="modal-content">
+            <div class="modal-icon-top mi-red"><i class="fa fa-trash-alt"></i></div>
+            <h3 class="text-center">لغو سفر</h3>
+            <p class="text-center text-muted mt-1">
+                آیا از لغو این سفر اطمینان دارید؟ در صورت لغو، سفر از تابلو حذف شده و توکن اعضای پیوسته به حسابشان بازگردانده می‌شود.
+            </p>
+            <div class="modal-actions mt-2">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('delete-modal')">انصراف</button>
+                <button type="button" class="btn btn-danger-solid" onclick="confirmDeleteTrip()">بله، لغو سفر</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Contact Info -->
+    <div id="contact-modal" class="modal" onclick="handleBackdropClick(event, 'contact-modal')">
+        <div class="modal-content text-center">
+            <div class="modal-icon-top mi-green"><i class="fa fa-check"></i></div>
+            <h3 class="text-success mb-1" id="contact-modal-title">رزرو با موفقیت انجام شد</h3>
+            <p class="text-muted">اطلاعات تماس ایجادکننده سفر:</p>
+            <div class="contact-reveal-box" id="contact-info"></div>
+            <p class="text-muted mt-1"><small>لطفاً برای هماهنگی نهایی با هم‌سفر خود تماس بگیرید.</small></p>
+            <button type="button" class="btn btn-glow btn-block mt-2" onclick="closeModal('contact-modal')">متوجه شدم</button>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
