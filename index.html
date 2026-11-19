@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>همسفر</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css"">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -196,54 +196,96 @@
         </div>
     </section>
 
-    <!-- Main App Container (Full Responsive Wide Layout) -->
+    <!-- Main App Container (Mobile-First + Wide Desktop Layout) -->
     <main id="app-main" class="container hidden">
         <!-- View: Dashboard -->
         <div id="view-dashboard" class="view">
             <div class="dashboard-layout">
                 <!-- Primary Content Area -->
                 <div class="dashboard-main">
-                    <!-- Welcome Banner -->
+                    <!-- Compact Welcome Banner -->
                     <div class="welcome-banner">
                         <div class="welcome-text">
                             <h2>سلام <span id="welcome-name" class="text-gradient">کاربر</span> 👋</h2>
                             <p>مسیر امروزت را پیدا کن یا سفر جدید ثبت کن تا هم‌سفرها به تو بپیوندند.</p>
                         </div>
-                        <button type="button" onclick="nav('add')" class="btn btn-glow">
+                        <button type="button" onclick="nav('add')" class="btn btn-glow welcome-cta-btn">
                             <i class="fa fa-plus"></i> ایجاد سفر جدید
                         </button>
                     </div>
 
-                    <!-- Filter Bar -->
-                    <div class="filter-box glass-card">
-                        <div class="filter-header">
-                            <span><i class="fa fa-sliders-h text-primary"></i> فیلتر سریع مسیرها</span>
-                            <button type="button" class="reset-filter-btn" onclick="resetFilters()">پاک‌کردن فیلترها</button>
-                        </div>
-                        <div class="filter-grid">
-                            <div class="select-wrap">
-                                <label for="filter-from">مبدأ</label>
-                                <select id="filter-from" onchange="renderTrips()">
-                                    <option value="">همه مبدأها</option>
-                                    <option value="دانشگاه">دانشگاه</option>
-                                    <option value="خوابگاه پسران">خوابگاه پسران</option>
-                                    <option value="خوابگاه دختران">خوابگاه دختران</option>
-                                    <option value="نوبنیاد">نوبنیاد</option>
-                                </select>
-                            </div>
-                            <div class="select-wrap">
-                                <label for="filter-to">مقصد</label>
-                                <select id="filter-to" onchange="renderTrips()">
-                                    <option value="">همه مقصدها</option>
-                                    <option value="دانشگاه">دانشگاه</option>
-                                    <option value="خوابگاه پسران">خوابگاه پسران</option>
-                                    <option value="خوابگاه دختران">خوابگاه دختران</option>
-                                    <option value="نوبنیاد">نوبنیاد</option>
-                                </select>
-                            </div>
-                            <button type="button" onclick="renderTrips()" class="btn btn-primary filter-submit-btn">
-                                <i class="fa fa-search"></i> جستجو
+                    <!-- Collapsible Compact Route Filter Menu -->
+                    <div class="filter-accordion" id="filter-accordion">
+                        <div class="filter-toggle-row">
+                            <button type="button" class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleFilterMenu()" aria-expanded="false" aria-controls="filter-panel">
+                                <span class="filter-toggle-right">
+                                    <span class="filter-icon-pill"><i class="fa fa-sliders-h"></i></span>
+                                    <span class="filter-toggle-title">فیلتر مسیر</span>
+                                    <span class="active-filter-chip hidden" id="active-filter-chip"></span>
+                                </span>
+                                <i class="fa fa-chevron-down filter-chevron" id="filter-chevron"></i>
                             </button>
+                            <button type="button" class="filter-quick-clear hidden" id="filter-quick-clear" onclick="resetFilters()" title="حذف فیلتر">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="filter-panel hidden" id="filter-panel">
+                            <!-- Popular Routes Inside Filter Menu -->
+                            <div class="popular-routes-section">
+                                <div class="popular-routes-label">
+                                    <i class="fa fa-fire text-warning"></i> مسیرهای پرتردد
+                                </div>
+                                <div class="popular-chips-grid">
+                                    <button type="button" class="route-chip" onclick="applyQuickRoute('دانشگاه', 'خوابگاه پسران')">
+                                        دانشگاه <i class="fa fa-long-arrow-alt-left"></i> خوابگاه پسران
+                                    </button>
+                                    <button type="button" class="route-chip" onclick="applyQuickRoute('خوابگاه پسران', 'دانشگاه')">
+                                        خوابگاه پسران <i class="fa fa-long-arrow-alt-left"></i> دانشگاه
+                                    </button>
+                                    <button type="button" class="route-chip" onclick="applyQuickRoute('دانشگاه', 'خوابگاه دختران')">
+                                        دانشگاه <i class="fa fa-long-arrow-alt-left"></i> خوابگاه دختران
+                                    </button>
+                                    <button type="button" class="route-chip" onclick="applyQuickRoute('دانشگاه', 'نوبنیاد')">
+                                        دانشگاه <i class="fa fa-long-arrow-alt-left"></i> نوبنیاد
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="filter-divider"></div>
+
+                            <!-- Custom Origin / Destination Selectors -->
+                            <div class="filter-grid">
+                                <div class="select-wrap">
+                                    <label for="filter-from">مبدأ</label>
+                                    <select id="filter-from" onchange="renderTrips()">
+                                        <option value="">همه مبدأها</option>
+                                        <option value="دانشگاه">دانشگاه</option>
+                                        <option value="خوابگاه پسران">خوابگاه پسران</option>
+                                        <option value="خوابگاه دختران">خوابگاه دختران</option>
+                                        <option value="نوبنیاد">نوبنیاد</option>
+                                    </select>
+                                </div>
+                                <div class="select-wrap">
+                                    <label for="filter-to">مقصد</label>
+                                    <select id="filter-to" onchange="renderTrips()">
+                                        <option value="">همه مقصدها</option>
+                                        <option value="دانشگاه">دانشگاه</option>
+                                        <option value="خوابگاه پسران">خوابگاه پسران</option>
+                                        <option value="خوابگاه دختران">خوابگاه دختران</option>
+                                        <option value="نوبنیاد">نوبنیاد</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-panel-actions">
+                                <button type="button" onclick="applyAndCloseFilter()" class="btn btn-primary btn-sm-action">
+                                    <i class="fa fa-search"></i> اعمال فیلتر
+                                </button>
+                                <button type="button" onclick="resetFilters()" class="btn btn-secondary btn-sm-action">
+                                    پاک‌کردن
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -264,7 +306,7 @@
                     <div id="trips-container"></div>
                 </div>
 
-                <!-- Sidebar Panel -->
+                <!-- Sidebar Panel (Desktop & Below Board on Mobile) -->
                 <aside class="dashboard-sidebar">
                     <!-- Quick Stats Widget -->
                     <div class="glass-card sidebar-widget">
@@ -286,29 +328,6 @@
                                 <span class="stat-value text-info" id="stat-joined">0</span>
                                 <span class="stat-label">هم‌سفری‌ها</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Popular Routes Quick Filter -->
-                    <div class="glass-card sidebar-widget">
-                        <h4 class="widget-title"><i class="fa fa-fire text-warning"></i> مسیرهای پرتردد</h4>
-                        <div class="quick-routes">
-                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('دانشگاه', 'خوابگاه پسران')">
-                                <span>دانشگاه <i class="fa fa-long-arrow-alt-left"></i> خوابگاه پسران</span>
-                                <i class="fa fa-chevron-left"></i>
-                            </button>
-                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('خوابگاه پسران', 'دانشگاه')">
-                                <span>خوابگاه پسران <i class="fa fa-long-arrow-alt-left"></i> دانشگاه</span>
-                                <i class="fa fa-chevron-left"></i>
-                            </button>
-                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('دانشگاه', 'خوابگاه دختران')">
-                                <span>دانشگاه <i class="fa fa-long-arrow-alt-left"></i> خوابگاه دختران</span>
-                                <i class="fa fa-chevron-left"></i>
-                            </button>
-                            <button type="button" class="quick-route-btn" onclick="applyQuickRoute('دانشگاه', 'نوبنیاد')">
-                                <span>دانشگاه <i class="fa fa-long-arrow-alt-left"></i> نوبنیاد</span>
-                                <i class="fa fa-chevron-left"></i>
-                            </button>
                         </div>
                     </div>
 

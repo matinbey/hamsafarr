@@ -64,6 +64,49 @@ function sanitizeNumericInput(inputEl) {
     inputEl.value = val.replace(/[^0-9]/g, '');
 }
 
+// Collapsible Filter Menu
+function toggleFilterMenu(forceState) {
+    const accordion = document.getElementById('filter-accordion');
+    const panel = document.getElementById('filter-panel');
+    const btn = document.getElementById('filter-toggle-btn');
+    if (!accordion || !panel || !btn) return;
+
+    const shouldOpen = typeof forceState === 'boolean' ? forceState : panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', !shouldOpen);
+    accordion.classList.toggle('open', shouldOpen);
+    btn.setAttribute('aria-expanded', String(shouldOpen));
+}
+
+function applyAndCloseFilter() {
+    renderTrips();
+    toggleFilterMenu(false);
+}
+
+function updateActiveFilterBadge() {
+    const fFrom = document.getElementById('filter-from')?.value || '';
+    const fTo = document.getElementById('filter-to')?.value || '';
+    const chip = document.getElementById('active-filter-chip');
+    const clearBtn = document.getElementById('filter-quick-clear');
+    const accordion = document.getElementById('filter-accordion');
+    if (!chip || !clearBtn || !accordion) return;
+
+    if (fFrom || fTo) {
+        let label = '';
+        if (fFrom && fTo) label = `${fFrom} ← ${fTo}`;
+        else if (fFrom) label = `از ${fFrom}`;
+        else label = `به ${fTo}`;
+        chip.innerText = label;
+        chip.classList.remove('hidden');
+        clearBtn.classList.remove('hidden');
+        accordion.classList.add('has-filter');
+    } else {
+        chip.innerText = '';
+        chip.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+        accordion.classList.remove('has-filter');
+    }
+}
+
 // Populate 24-Hour Time Dropdowns (00:00 to 23:59)
 function init24HourPicker() {
     const hourSelect = document.getElementById('trip-hour');
@@ -231,7 +274,6 @@ function handleLogin(e) {
     }
 
     if (users[sid]) {
-        // Returning student: preserve tokens and rating, update profile details
         users[sid].name = name;
         users[sid].gender = gender;
         users[sid].contact = contact;
@@ -239,7 +281,6 @@ function handleLogin(e) {
         saveData();
         showToast(`خوش برگشتی ${name.split(' ')[0]}!`);
     } else {
-        // New student: award 10 welcome tokens
         user = {
             name,
             sid,
@@ -285,6 +326,7 @@ function applyQuickRoute(from, to) {
     document.getElementById('filter-from').value = from;
     document.getElementById('filter-to').value = to;
     renderTrips();
+    toggleFilterMenu(false);
     showToast(`فیلتر مسیر: ${from} به ${to}`);
 }
 
@@ -292,6 +334,7 @@ function resetFilters() {
     document.getElementById('filter-from').value = '';
     document.getElementById('filter-to').value = '';
     renderTrips();
+    toggleFilterMenu(false);
 }
 
 // Stats Updater
@@ -318,14 +361,12 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
-// Check if current user is allowed by trip gender restriction
 function isGenderAllowed(trip) {
     if (trip.gender === 'فقط آقایان') return user.gender === 'آقا';
     if (trip.gender === 'فقط خانم‌ها') return user.gender === 'خانم';
     return true;
 }
 
-// Check if current user already joined a trip
 function hasUserJoined(trip) {
     return Array.isArray(trip.passengers) && trip.passengers.some(p => p.sid === user.sid);
 }
@@ -333,6 +374,7 @@ function hasUserJoined(trip) {
 // Trips Dashboard
 function renderTrips() {
     updateStats();
+    updateActiveFilterBadge();
     const fFrom = document.getElementById('filter-from').value;
     const fTo = document.getElementById('filter-to').value;
     const container = document.getElementById('trips-container');
@@ -343,7 +385,6 @@ function renderTrips() {
     if (currentTab === 'mine') {
         filtered = filtered.filter(t => t.creatorSid === user.sid);
     } else {
-        // Show trips that have open capacity OR trips the current user already joined
         filtered = filtered.filter(t => t.capacity > 0 || hasUserJoined(t));
         if (fFrom) filtered = filtered.filter(t => t.from === fFrom);
         if (fTo) filtered = filtered.filter(t => t.to === fTo);
@@ -498,7 +539,6 @@ function handleAddTrip(e) {
     nav('dashboard');
 }
 
-// Cancel/Delete Trip by Creator (with confirmation & automatic token refund to passengers)
 function openDeleteModal(id) {
     pendingDeleteTripId = id;
     document.getElementById('delete-modal').style.display = 'flex';
@@ -509,7 +549,6 @@ function confirmDeleteTrip() {
     const trip = trips.find(t => t.id === pendingDeleteTripId);
     if (!trip) return;
 
-    // Refund tokens to any joined passengers and mark history as cancelled
     if (Array.isArray(trip.passengers)) {
         trip.passengers.forEach(p => {
             if (users[p.sid]) {
@@ -620,7 +659,6 @@ function showContactForTrip(tripId) {
     document.getElementById('contact-modal').style.display = 'flex';
 }
 
-// Passenger cancels their seat on a joined trip
 function leaveTrip(tripId) {
     const trip = trips.find(t => t.id === tripId);
     if (!trip || !hasUserJoined(trip)) return;
@@ -698,7 +736,6 @@ function rateTrip(joinRecordId, score) {
 
     record.ratedScore = score;
 
-    // Update creator's average rating if present in users directory
     if (record.creatorSid && users[record.creatorSid]) {
         const targetUser = users[record.creatorSid];
         targetUser.ratingSum = (targetUser.ratingSum || 5) + score;
